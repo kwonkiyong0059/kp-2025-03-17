@@ -26,5 +26,8 @@ WORKDIR /app
 # 첫 번째 스테이지에서 빌드된 JAR 파일 복사
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# 실행할 JAR 파일 지정
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]
+# 🔹 application-secret.yml 파일을 Docker 컨테이너 내부로 복사
+COPY src/main/resources/application-secret.yml /app/config/application-secret.yml
+
+# 실행할 JAR 파일 지정 (Spring이 해당 설정을 읽을 수 있도록 경로 추가)
+ENTRYPOINT ["java", "-jar", "-Dspring.config.location=file:/app/config/application-secret.yml", "-Dspring.profiles.active=prod", "app.jar"]
