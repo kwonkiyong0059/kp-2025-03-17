@@ -83,15 +83,5 @@ jobs:
             docker pull ghcr.io/${{ env.OWNER_LC }}/app20250314:latest
             docker stop app1 2>/dev/null
             docker rm app1 2>/dev/null
-
-            # GitHub Secrets에서 application-secret.yml을 EC2에 저장
-            echo "${{ secrets.APPLICATION_SECRET_YML }}" > /home/ubuntu/application-secret.yml
-
-            # Docker 실행 시 application-secret.yml을 마운트
-            docker run -d --name app1 \
-              -p 8080:8080 \
-              -v /home/ubuntu/application-secret.yml:/app/config/application-secret.yml \
-              -e SPRING_CONFIG_LOCATION=file:/app/config/application-secret.yml \
-              ghcr.io/${{ env.OWNER_LC }}/app20250314:latest
-
+            docker run -d --name app1 -p 8080:8080 ghcr.io/${{ env.OWNER_LC }}/app20250314:latest
             docker rmi $(docker images -f "dangling=true" -q)
